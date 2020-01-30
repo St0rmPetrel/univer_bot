@@ -73,7 +73,7 @@ def timetable(message):
         if day == "week":
             text = t.print_week(shape, week)
         else:
-            text = t.print_day(t, shape, week)
+            text = t.print_day(t.give_day(day), shape, week)
     else:
         text = "Command error"
     bot.send_message(chat_id=chat_id, text=text)
