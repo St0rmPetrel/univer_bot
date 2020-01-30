@@ -94,13 +94,12 @@ class TimeTable():
             lesson_number += 1
         return text
     
-    def print_days(self, days, shape_form="brief", week="current"):
+    def print_week(self, shape_form="brief", week="current"):
         text = ""
-        if days.lower() == "week":
-            for day in self.weekdays:
-                text_day = self.print_day(self.give_day(day), shape_form, week)
-                if text_day:
-                    text += day + '\n'
-                    text += text_day + '\n'
+        for day in self.weekdays:
+            text_day = self.print_day(self.give_day(day), shape_form, week)
+            if text_day:
+                text += day + '\n'
+                text += text_day + '\n'
         return text
    
