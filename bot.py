@@ -42,7 +42,7 @@ def timetable(message):
     chat_id = message.chat.id
     t = TimeTable("old_timetable.json")
     #command = message.text
-    text = t.print_days("week")
+    text = t.print_week()
     text += '\n' + message.text
     bot.send_message(chat_id=chat_id, text=text)
 
@@ -51,7 +51,7 @@ def week(message):
     chat_id = message.chat.id
     file_curent_week = "current_week.json"
     with open(file_curent_week) as f:
-        curent_week = int(json.load(f))
+        curent_week = json.load(f)
     bot.send_message(chat_id, text=curent_week)
     
 
