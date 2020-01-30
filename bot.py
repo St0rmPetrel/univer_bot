@@ -9,6 +9,19 @@ TOKEN = '1083066191:AAGXKSutCPElXS_jRbtmjZnShXbNItPps0k'
 bot = telebot.TeleBot(TOKEN)
 server = Flask(__name__)
 
+day_command = ["today", "tomorrow", "yesterday", "week"]
+shape_command = ["brief", "detail"]
+
+def is_day(sub_command, timetable):
+    if sub_command in (timetable.weekdays + day_command):
+        return True
+    else:
+        return False
+def is_shape(sub_command, timetable):
+    if sub_command in shape_command:
+        return True
+    else:
+        return False
 
 @bot.message_handler(commands=['start', 'help'])
 def start(message):
@@ -23,19 +36,6 @@ period of time what you like\n\
 your choice"
     bot.send_message(chat_id, text)    
 
-day_command = ["today", "tomorrow", "yesterday", "week"]
-shape_command = ["brief", "detail"]
-
-def is_day(sub_command, timetable):
-    if sub_command in (timetable.weekdays + day_command):
-        return True
-    else:
-        return False
-def is_shape(sub_command, timetable):
-    if sub_command in shape_command:
-        return True
-    else:
-        return False
     
 @bot.message_handler(commands=['timetable'])
 def timetable(message):
