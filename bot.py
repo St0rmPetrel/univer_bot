@@ -74,6 +74,10 @@ def timetable(message):
             text = t.print_week(shape, week)
         else:
             text = t.print_day(t.give_day(day), shape, week)
+            if text:
+                text = day + '\n' + text
+            else:
+                text = "Сегодня нет пар"
     else:
         text = "Command error"
     bot.send_message(chat_id=chat_id, text=text)
