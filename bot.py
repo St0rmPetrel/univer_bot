@@ -41,9 +41,10 @@ def is_shape(sub_command, timetable):
 def timetable(message):
     chat_id = message.chat.id
     t = TimeTable("old_timetable.json")
-    command = message.text
+    #command = message.text
     text = t.print_days("week")
-    bot.send_message(chat_id=chat_id, text=text+'\n'+command)
+    text += '\n' + message.text
+    bot.send_message(chat_id=chat_id, text=text)
 
 @bot.message_handler(commands=['week'])
 def week(message):
