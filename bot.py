@@ -22,23 +22,14 @@ def is_shape(sub_command):
         return True
     else:
         return False
-def is_week_number(sub_command):
-    try:
-        i = int(sub_command)
-        if i <= 35:
-            return True
-        else:
-            return False
-    except:
-        return False
+
 def is_timetable_command(command, timetable):
     if command[0] == "/timetable":
         if len(command) > 1:
             command = command[1:]
             flag = True
             for sub_command in command:
-                if is_day(sub_command, timetable) or is_shape(
-                        sub_command) or is_week_number(sub_command):
+                if is_day(sub_command, timetable) or is_shape(sub_command):
                     pass
                 else:
                     flag = False
@@ -79,8 +70,6 @@ def timetable(message):
                 day = sub_command
             if is_shape(sub_command):
                 shape = sub_command
-            if is_week_number(sub_command):
-                week = sub_command
         if day == "week":
             text = t.print_week(shape, week)
         else:
