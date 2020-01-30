@@ -17,9 +17,37 @@ def is_day(sub_command, timetable):
         return True
     else:
         return False
-def is_shape(sub_command, timetable):
+def is_shape(sub_command):
     if sub_command in shape_command:
         return True
+    else:
+        return False
+def is_week_number(sub_command):
+    try:
+        i = int(sub_command)
+        if i <= 35:
+            return True
+        else:
+            return False
+    except:
+        return False
+def is_timetable_command(command, timetable):
+    if command[0] == "/timetable":
+        if len(command) > 1:
+            command = command[1:]
+            flag = True
+            for sub_command in command:
+                if is_day(sub_command, timetable) or is_shape(
+                        sub_command) or is_week_number(sub_command):
+                    pass
+                else:
+                    flag = False
+            if flag:
+                return True
+            else:
+                return False
+        else:
+            return True
     else:
         return False
 
@@ -41,9 +69,24 @@ your choice"
 def timetable(message):
     chat_id = message.chat.id
     t = TimeTable("old_timetable.json")
-    #command = message.text
-    text = t.print_week()
-    text += '\n' + message.text
+    command = message.text.split()
+    shape = "brief"
+    day = "today"
+    week = "current"
+    if is_timetable_command(command, t):
+        for sub_command in command:
+            if is_day(sub_command, t):
+                day = sub_command
+            if is_shape(sub_command):
+                shape = sub_command
+            if is_week_number(sub_command):
+                week = sub_command
+        if day == "week":
+            text = t.print_week(shape, week)
+        else:
+            text = t.print_day(t, shape, week)
+    else:
+        text = "Command error"
     bot.send_message(chat_id=chat_id, text=text)
 
 @bot.message_handler(commands=['week'])
