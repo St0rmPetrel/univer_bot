@@ -49,7 +49,7 @@ def start(message):
 current number of study-week and full name of your teacher\n\n\
 You can control me by sending these commands:\n\n\
 /timetable-show timetable in form and \
-period of time what you like, for more information use command\
+period of time what you like, for more information use command\n\
 /help_timetable\n\
 /week-show current number of study-week\n\
 /name-show full name of teacher which\
@@ -59,14 +59,14 @@ your choice"
 @bot.message_handler(commands=['help_timetable'])
 def help_timetable(message):
     chat_id = message.chat.id
-    text = "full command /timetable also contain two parameters - form\
-in which you want to see the timeable (\"brief\" or \"detail\") and day or period\
-of time in which about you want to know (\"today\",\
-\"yesterday\, \"tomorrow\", \"week\", or \
-any day on week: \"Monday\", \"Tuesday\", \"Wednesday\", etc.\
+    text = "Full command /timetable also contain two parameters\n -form\
+in which you want to see the timeable (\"brief\" or \"detail\")\n -day or period\
+of time in which about you want to know (\"today\", \
+\"yesterday\", \"tomorrow\", \"week\", or \
+any day on week: \"Monday\", \"Tuesday\", \"Wednesday\", etc.\n\
  You can write this parameters\
 in any order what you like or pass any of them. By default, form is brief and\
- day is today. For example command \"/timetable detail week\", show you \
+ day is today. For example command \n/timetable detail week\n show you \
  timetable in detail, command"
     bot.send_message(chat_id, text)
 
