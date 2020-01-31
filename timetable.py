@@ -31,7 +31,7 @@ class TimeTable():
         self.lesson_time = ["08:30 - 10:05", "10:15 - 11:50", "12:00 - 13:35", 
                             "13:50 - 15:25", "15:40 - 17:15", 
                             "17:25 - 19:00", "19:10 - 20:45"]
-        self.weekdays = ["Monday", "Teusday", "Wednesday", "Thursday", 
+        self.weekdays = ["Monday", "Tuesday", "Wednesday", "Thursday", 
                          "Friday", "Saturday", "Sunday"]
         
     def brief(self, lesson, lesson_number):
