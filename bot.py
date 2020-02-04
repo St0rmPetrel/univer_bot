@@ -15,19 +15,7 @@ groups = []
 day_command = ["today", "tomorrow", "yesterday", "week"]
 shape_command = ["brief", "detail"]
 
-from datetime import datetime
-
-time = datetime.today().time()
-
-hour = 15
-minut = 30
-flag = True
-if time.hour == hour and time.minute == minut and flag:
-    for key in users.keys():
-        chat_id_= key
-        break
-    bot.send_message(chat_id_, text="Fuck, I don't belive that it work")
-    flag == False
+from datetime import datetime #
     
 
 
@@ -199,3 +187,15 @@ def webhook():
 
 if __name__ == "__main__":
     server.run(host="0.0.0.0", port=int(os.environ.get('PORT', 5000)))
+    
+while True:
+    time = datetime.today().time()
+    hour = 15
+    minut = 35
+    flag = True
+    if time.hour == hour and time.minute == minut and flag:
+        for key in users.keys():
+            chat_id_= key
+            break
+        bot.send_message(chat_id_, text="Fuck, I don't belive that it work")
+        flag == False
