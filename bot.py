@@ -94,6 +94,16 @@ in any order what you like or pass any of them. By default, form is brief and\
  day is today. For example command \n/timetable detail week\n show you \
  timetable in detail, command"
     bot.send_message(chat_id, text)
+    
+@bot.message_handler(commands=['time'])
+def time(message):
+    chat_id = message.chat.id
+    global time
+    time2 = datetime.today().time()
+    bot.send_message(chat_id, str(time))
+    bot.send_message(chat_id, str(time2))
+    
+    
 
     
 @bot.message_handler(commands=['timetable'])
