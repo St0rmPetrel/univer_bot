@@ -4,7 +4,7 @@ from flask import Flask, request
 import telebot
 from timetable import TimeTable
 from scraper import load_timetable, give_link
-import json#
+import json
 
 TOKEN = '1083066191:AAGXKSutCPElXS_jRbtmjZnShXbNItPps0k'
 bot = telebot.TeleBot(TOKEN)
@@ -14,6 +14,22 @@ users = {}
 groups = []
 day_command = ["today", "tomorrow", "yesterday", "week"]
 shape_command = ["brief", "detail"]
+
+from datetime import datetime
+
+time = datetime.today().time()
+
+hour = 18
+minut = 15
+flag = True
+if time.hour == hour and time.minute == minut and flag:
+    for key in users.keys():
+        chat_id_= key
+        break
+    bot.send_message(chat_id_, text="Fuck, I don't belive that it work")
+    flag == False
+    
+
 
 def is_day(sub_command, timetable):
     if sub_command in (timetable.weekdays + day_command):
