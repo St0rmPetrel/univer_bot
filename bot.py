@@ -3,7 +3,7 @@ from flask import Flask, request
 
 import telebot
 from timetable import TimeTable
-from scraper import load_timetable, give_link
+from scraper import load_timetable, give_link, load_week
 import json
 
 TOKEN = '1083066191:AAGXKSutCPElXS_jRbtmjZnShXbNItPps0k'
@@ -14,10 +14,6 @@ users = {}
 groups = []
 day_command = ["today", "tomorrow", "yesterday", "week"]
 shape_command = ["brief", "detail"]
-
-from datetime import datetime #
-    
-
 
 def is_day(sub_command, timetable):
     if sub_command in (timetable.weekdays + day_command):
@@ -55,6 +51,12 @@ def time_table_update(group):
     load_timetable(link, file_path)
     return file_path
 
+def week_update(group):
+    link = give_link(group)
+    file_path = "current_week.json"
+    load_week(link, file_path)
+    return file_path
+
 @bot.message_handler(commands=['start', 'help'])
 def start(message):
     chat_id = message.chat.id
@@ -82,17 +84,6 @@ in any order what you like or pass any of them. By default, form is brief and\
  day is today. For example command \n/timetable detail week\n show you \
  timetable in detail, command"
     bot.send_message(chat_id, text)
-    
-@bot.message_handler(commands=['time'])
-def time_(message):
-    chat_id = message.chat.id
-    global time
-    time2 = datetime.today().time()
-    bot.send_message(chat_id, str(time))
-    bot.send_message(chat_id, str(time2))
-    
-    
-
     
 @bot.message_handler(commands=['timetable'])
 def timetable(message):
@@ -167,9 +158,22 @@ def update(message):
         bot.send_message(chat_id, text=text)
         return None
     time_table_update(group)
-    text = "Your timetable successful"
+    text = "Your timetable was updating successful"
     bot.send_message(chat_id, text=text)
     
+@bot.message_handler(commands=['newweek'])
+def newweek(message):
+    chat_id = message.chat.id
+    try:
+        group = users[chat_id]
+    except:
+        text = "Probably you are new user, or bot was reload. Try to use \
+ /group [your group] command"
+        bot.send_message(chat_id, text=text)
+        return None
+    week_update(group)
+    text = "Your week was updating successful"
+    bot.send_message(chat_id, text=text)
 
 
 @server.route('/' + TOKEN, methods=['POST'])
