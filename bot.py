@@ -129,12 +129,14 @@ def group_(message):
         group = message.text.split()[1]
     except:
         text = "Command error"
-    if group_ in groups:
+    if group in groups:
         users[chat_id] = group
         text = "Okay, now you can look on your timetable"
     else:
         try:
             time_table_update(group)
+            users[chat_id] = group
+            groups.append(group)
             text = "Okay, now you can look on your timetable"
         except:
             text = "Your group is probably wrong"
