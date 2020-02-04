@@ -3,12 +3,15 @@ from flask import Flask, request
 
 import telebot
 from timetable import TimeTable
-import json
+from scraper import load_timetable, give_link
+import json#
 
 TOKEN = '1083066191:AAGXKSutCPElXS_jRbtmjZnShXbNItPps0k'
 bot = telebot.TeleBot(TOKEN)
 server = Flask(__name__)
 
+users = {}
+groups = []
 day_command = ["today", "tomorrow", "yesterday", "week"]
 shape_command = ["brief", "detail"]
 
@@ -41,6 +44,12 @@ def is_timetable_command(command, timetable):
             return True
     else:
         return False
+    
+def time_table_update(group):
+    link = give_link(group)
+    file_path = "TimeTabeles/{}".format(group) + ".json"
+    load_timetable(link, file_path)
+    return file_path
 
 @bot.message_handler(commands=['start', 'help'])
 def start(message):
@@ -74,7 +83,15 @@ in any order what you like or pass any of them. By default, form is brief and\
 @bot.message_handler(commands=['timetable'])
 def timetable(message):
     chat_id = message.chat.id
-    t = TimeTable("old_timetable.json")
+    try:
+        group = users[chat_id]
+    except:
+        text = "Probably you are new user, or bot was reload. Try to use \
+ /group [your group] command"
+        bot.send_message(chat_id, text=text)
+        return None
+    file_path = "TimeTabeles/{}".format(group) + ".json" 
+    t = TimeTable(file_path)
     command = message.text.split()
     shape = "brief"
     day = "today"
@@ -104,6 +121,38 @@ def week(message):
     with open(file_curent_week) as f:
         curent_week = json.load(f)
     bot.send_message(chat_id, text=curent_week)
+
+@bot.message_handler(commands=['group'])
+def group_(message):
+    chat_id = message.chat.id
+    try:
+        group = message.text.split()[1]
+    except:
+        text = "Command error"
+    if group_ in groups:
+        users[chat_id] = group
+        text = "Okay, now you can look on your timetable"
+    else:
+        try:
+            time_table_update(group)
+            text = "Okay, now you can look on your timetable"
+        except:
+            text = "Your group is probably wrong"
+    bot.send_message(chat_id, text=text)
+    
+@bot.message_handler(commands=['update'])
+def update(message):
+    chat_id = message.chat.id
+    try:
+        group = users[chat_id]
+    except:
+        text = "Probably you are new user, or bot was reload. Try to use \
+ /group [your group] command"
+        bot.send_message(chat_id, text=text)
+        return None
+    time_table_update(group)
+    text = "Your timetable successful"
+    bot.send_message(chat_id, text=text)
     
 
 
