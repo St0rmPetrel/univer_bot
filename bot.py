@@ -19,8 +19,8 @@ from datetime import datetime
 
 time = datetime.today().time()
 
-hour = 18
-minut = 15
+hour = 15
+minut = 30
 flag = True
 if time.hour == hour and time.minute == minut and flag:
     for key in users.keys():
@@ -96,7 +96,7 @@ in any order what you like or pass any of them. By default, form is brief and\
     bot.send_message(chat_id, text)
     
 @bot.message_handler(commands=['time'])
-def time(message):
+def time_(message):
     chat_id = message.chat.id
     global time
     time2 = datetime.today().time()
