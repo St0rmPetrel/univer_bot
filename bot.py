@@ -60,21 +60,23 @@ def week_update(group):
 @bot.message_handler(commands=['start', 'help'])
 def start(message):
     chat_id = message.chat.id
-    text = "I can help you to remember the timetable in  your university, \
-current number of study-week and full name of your teacher\n\n\
+    text = "I can help you to remember the timetable in  your university and \
+current number of study-week.\n\n\
 You can control me by sending these commands:\n\n\
+/group [your group] if you are a new user it's set up your group.\
+For example command \n/group СМ4-91\n set up your group on СМ4-91\n\
 /timetable-show timetable in form and \
 period of time what you like, for more information use command\n\
 /help_timetable\n\
+/update - update your timetable according on site bmstu\n\
 /week-show current number of study-week\n\
-/name-show full name of teacher which\
-your choice"
+/newweek - update your current week according on site bmstu"
     bot.send_message(chat_id, text)
 
 @bot.message_handler(commands=['help_timetable'])
 def help_timetable(message):
     chat_id = message.chat.id
-    text = "Full command /timetable also contain two parameters\n -form\
+    text = "Full command /timetable also contain two parameters\n -form \
 in which you want to see the timeable (\"brief\" or \"detail\")\n -day or period\
 of time in which about you want to know (\"today\", \
 \"yesterday\", \"tomorrow\", \"week\", or \
