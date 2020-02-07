@@ -149,7 +149,7 @@ def group_(message):
         except:
             text = "Your group is probably wrong"
     save_json("users.json", users)
-    save_json("groups.json", users)
+    save_json("groups.json", groups)
     bot.send_message(chat_id, text=text)
     
 @bot.message_handler(commands=['update'])
