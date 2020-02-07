@@ -13,6 +13,9 @@ server = Flask(__name__)
 day_command = ["today", "tomorrow", "yesterday", "week"]
 shape_command = ["brief", "detail"]
 
+users = {}#
+groups = []#
+
 def is_day(sub_command, timetable):
     if sub_command in (timetable.weekdays + day_command):
         return True
@@ -88,7 +91,7 @@ in any order what you like or pass any of them. By default, form is brief and\
 @bot.message_handler(commands=['timetable'])
 def timetable(message):
     chat_id = message.chat.id
-    users = give_json("users.json")
+    #users = give_json("users.json")
     try:
         group = users[chat_id]
     except:
@@ -131,7 +134,7 @@ def week(message):
 @bot.message_handler(commands=['group'])
 def group_(message):
     chat_id = message.chat.id
-    users = give_json("users.json")
+    #users = give_json("users.json")
     groups = give_json("groups.json")
     try:
         group = message.text.split()[1]
@@ -148,14 +151,14 @@ def group_(message):
             text = "Okay, now you can look on your timetable"
         except:
             text = "Your group is probably wrong"
-    save_json("users.json", users)
-    save_json("groups.json", groups)
+    #save_json("users.json", users)
+    #save_json("groups.json", groups)
     bot.send_message(chat_id, text=text)
     
 @bot.message_handler(commands=['update'])
 def update(message):
     chat_id = message.chat.id
-    users = give_json("users.json")
+    #users = give_json("users.json")
     try:
         group = users[chat_id]
     except:
@@ -170,7 +173,7 @@ def update(message):
 @bot.message_handler(commands=['newweek'])
 def newweek(message):
     chat_id = message.chat.id
-    users = give_json("users.json")
+    #users = give_json("users.json")
     try:
         group = users[chat_id]
     except:
