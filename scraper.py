@@ -83,6 +83,11 @@ def take_timetable(bs):
 def save_json(new_file_name, data):
     with open(new_file_name, 'w') as f:
         json.dump(data, f)
+        
+def give_json(file_name):
+    with open(file_name) as f:
+        data = json.load(f)
+    return data
 
 def load_timetable(url, new_file_name):
     html = urlopen(url)

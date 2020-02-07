@@ -3,15 +3,13 @@ from flask import Flask, request
 
 import telebot
 from timetable import TimeTable
-from scraper import load_timetable, give_link, load_week
+from scraper import load_timetable, give_link, load_week, save_json, give_json
 import json
 
 TOKEN = '1083066191:AAGXKSutCPElXS_jRbtmjZnShXbNItPps0k'
 bot = telebot.TeleBot(TOKEN)
 server = Flask(__name__)
 
-users = {}
-groups = []
 day_command = ["today", "tomorrow", "yesterday", "week"]
 shape_command = ["brief", "detail"]
 
@@ -90,6 +88,7 @@ in any order what you like or pass any of them. By default, form is brief and\
 @bot.message_handler(commands=['timetable'])
 def timetable(message):
     chat_id = message.chat.id
+    users = give_json("users.json")
     try:
         group = users[chat_id]
     except:
@@ -132,6 +131,8 @@ def week(message):
 @bot.message_handler(commands=['group'])
 def group_(message):
     chat_id = message.chat.id
+    users = give_json("users.json")
+    groups = give_json("groups.json")
     try:
         group = message.text.split()[1]
     except:
@@ -147,11 +148,14 @@ def group_(message):
             text = "Okay, now you can look on your timetable"
         except:
             text = "Your group is probably wrong"
+    save_json("users.json", users)
+    save_json("groups.json", users)
     bot.send_message(chat_id, text=text)
     
 @bot.message_handler(commands=['update'])
 def update(message):
     chat_id = message.chat.id
+    users = give_json("users.json")
     try:
         group = users[chat_id]
     except:
@@ -166,6 +170,7 @@ def update(message):
 @bot.message_handler(commands=['newweek'])
 def newweek(message):
     chat_id = message.chat.id
+    users = give_json("users.json")
     try:
         group = users[chat_id]
     except:
