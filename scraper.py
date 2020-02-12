@@ -13,26 +13,32 @@ import json
 
 def is_lesson(lesson_name):
     for les in lesson_name:
-        if not les:
-            return False
-    return True
+        if les:
+            return True
+    return False
 def is_puls(lesson_name):
     if len(lesson_name) == 1:
         return False
     else:
         return True
 def lesson_dict(lesson_name, lesson_items):
-    lesson_dic = {}
-    lesson_dic["Subject"] = lesson_name
-    lesson_dic["Room"] = lesson_items[1]
-    lesson_dic["Type"] = lesson_items[0]
-    lesson_dic["Teacher"] = lesson_items[2]
+    if lesson_items:
+        lesson_dic = {}
+        lesson_dic["Subject"] = lesson_name
+        lesson_dic["Room"] = lesson_items[1]
+        lesson_dic["Type"] = lesson_items[0]
+        lesson_dic["Teacher"] = lesson_items[2]
+    else:
+        lesson_dic = None
     return lesson_dic
 def filter_lesson_items(lesson_items):
-    lesson_items = [item.get_text() for item in lesson_items]
-    if lesson_items[2]:
-        lesson_items[2] = " ".join(lesson_items[2].split("\xa0"))
-    return lesson_items
+    if lesson_items:
+        lesson_items = [item.get_text() for item in lesson_items]
+        if lesson_items[2]:
+            lesson_items[2] = " ".join(lesson_items[2].split("\xa0"))
+        return lesson_items
+    else:
+        return None
 def filter_lesson(lesson_name, lesson_items):
     if is_lesson(lesson_name):
         if not is_puls(lesson_name):
@@ -43,7 +49,10 @@ def filter_lesson(lesson_name, lesson_items):
             lesson_name_q = [None, None]
             for i in range(2):
                 lesson_items[i] = filter_lesson_items(lesson_items[i])
-                lesson_name_q[i] = lesson_name[i].get_text()
+                if lesson_name[i]:
+                    lesson_name_q[i] = lesson_name[i].get_text()
+                else:
+                    lesson_name_q[i] = None
         return (lesson_name_q, lesson_items)
 
 def save_lesson(timetable, lesson, day, lesson_number, lesson_name):
