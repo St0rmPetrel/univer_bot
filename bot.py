@@ -6,7 +6,8 @@ from timetable import TimeTable
 from scraper import load_timetable, give_link, load_week, save_json, give_json
 import json
 
-TOKEN = '1083066191:AAGXKSutCPElXS_jRbtmjZnShXbNItPps0k'
+#TOKEN = '1083066191:AAGXKSutCPElXS_jRbtmjZnShXbNItPps0k'
+TOKEN = os.environ['TOKEN']
 bot = telebot.TeleBot(TOKEN)
 server = Flask(__name__)
 
