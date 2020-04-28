@@ -1,97 +1,33 @@
+# Main imports for server.
 import os
 from flask import Flask, request
-
 import telebot
+# My imports 
 from timetable import TimeTable
-from scraper import load_timetable, give_link, load_week, save_json, give_json
-import json
+from handler import *
 
 TOKEN = os.environ['TOKEN']
 bot = telebot.TeleBot(TOKEN)
 server = Flask(__name__)
 
-day_command = ["today", "tomorrow", "yesterday", "week"]
-shape_command = ["brief", "detail"]
-
 users = {}#
 groups = []#
-
-def is_day(sub_command, timetable):
-    if sub_command in (timetable.weekdays + day_command):
-        return True
-    else:
-        return False
-def is_shape(sub_command):
-    if sub_command in shape_command:
-        return True
-    else:
-        return False
-
-def is_timetable_command(command, timetable):
-    if command[0] == "/timetable":
-        if len(command) > 1:
-            command = command[1:]
-            flag = True
-            for sub_command in command:
-                if is_day(sub_command, timetable) or is_shape(sub_command):
-                    pass
-                else:
-                    flag = False
-            if flag:
-                return True
-            else:
-                return False
-        else:
-            return True
-    else:
-        return False
-    
-def time_table_update(group):
-    link = give_link(group)
-    file_path = "TimeTabeles/{}".format(group) + ".json"
-    load_timetable(link, file_path)
-    return file_path
-
-def week_update(group):
-    link = give_link(group)
-    file_path = "current_week.json"
-    load_week(link, file_path)
-    return file_path
 
 @bot.message_handler(commands=['start', 'help'])
 def start(message):
     chat_id = message.chat.id
-    text = "I can help you to remember the timetable in  your university and \
-current number of study-week.\n\n\
-You can control me by sending these commands:\n\n\
-/group [your group] if you are a new user it's set up your group.\
-For example command \n/group СМ4-91\n set up your group on СМ4-91\n\
-/timetable-show timetable in form and \
-period of time what you like, for more information use command\n\
-/help_timetable\n\
-/update - update your timetable according on site bmstu\n\
-/week-show current number of study-week\n\
-/newweek - update your current week according on site bmstu"
+    text = text_messege('start')
     bot.send_message(chat_id, text)
 
 @bot.message_handler(commands=['help_timetable'])
 def help_timetable(message):
     chat_id = message.chat.id
-    text = "Full command /timetable also contain two parameters\n -form \
-in which you want to see the timeable (\"brief\" or \"detail\")\n -day or period\
-of time in which about you want to know (\"today\", \
-\"yesterday\", \"tomorrow\", \"week\", or \
-any day on week: \"Monday\", \"Tuesday\", \"Wednesday\", etc.\n\
- You can write this parameters\
-in any order what you like or pass any of them. By default, form is brief and\
- day is today. For example command \n/timetable detail week\n show you \
- timetable in detail, command"
+    text = text_messege('help_timetable')
     bot.send_message(chat_id, text)
     
 @bot.message_handler(commands=['timetable'])
 def timetable(message):
     chat_id = message.chat.id
-    #users = give_json("users.json")
     try:
         group = users[chat_id]
     except:
@@ -134,7 +70,6 @@ def week(message):
 @bot.message_handler(commands=['group'])
 def group_(message):
     chat_id = message.chat.id
-    #users = give_json("users.json")
     groups = give_json("groups.json")
     try:
         group = message.text.split()[1]
@@ -151,14 +86,14 @@ def group_(message):
             text = "Okay, now you can look on your timetable"
         except:
             text = "Your group is probably wrong"
-    #save_json("users.json", users)
-    #save_json("groups.json", groups)
+    # save_json("users.json", users)
+    # save_json("groups.json", groups)
     bot.send_message(chat_id, text=text)
     
 @bot.message_handler(commands=['update'])
 def update(message):
     chat_id = message.chat.id
-    #users = give_json("users.json")
+    # users = give_json("users.json")
     try:
         group = users[chat_id]
     except:
@@ -169,11 +104,10 @@ def update(message):
     time_table_update(group)
     text = "Your timetable was updating successful"
     bot.send_message(chat_id, text=text)
-    
+
 @bot.message_handler(commands=['newweek'])
 def newweek(message):
     chat_id = message.chat.id
-    #users = give_json("users.json")
     try:
         group = users[chat_id]
     except:
@@ -185,7 +119,7 @@ def newweek(message):
     text = "Your week was updating successful"
     bot.send_message(chat_id, text=text)
 
-
+# From this place start server part, don't touch.
 @server.route('/' + TOKEN, methods=['POST'])
 def getMessage():
     bot.process_new_updates([telebot.types.Update.de_json(request.stream.read().decode("utf-8"))])
