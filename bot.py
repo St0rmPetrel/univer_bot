@@ -90,7 +90,7 @@ def make_tests(message):
             text = "Command error" # вот это выводит
     else:
         text = "User already exist"
-    bot.send_message(chat_id, text=name)
+    bot.send_message(chat_id, text=text)
     
 """
 Может когда нибудь введу эту функцию
