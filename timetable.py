@@ -3,7 +3,6 @@ Created on Wed Jan 29 08:48:23 2020
 
 @author: Telman
 """
-import json
 from datetime import datetime, timedelta
 
 class TimeTable():
@@ -11,7 +10,7 @@ class TimeTable():
     bla bla bla 
     """
     
-    def __init__(self, time_table_dict, week="1 неделя, знаменатель"):
+    def __init__(self, time_table_dict, week):
         """
         Parameters
         ----------

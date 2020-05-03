@@ -9,11 +9,9 @@ Created on Sat May  2 17:03:03 2020
 import psycopg2
 import json
 import scraper
-
-# Then take it from enviroment 
-DATABASE_URL = "postgres://oxuxzqqupiyvoo:\
-f85010c868d2fac8a157c0267e3b78811cb97a361769ac505e88ec91718e81b8\
-@ec2-34-195-169-25.compute-1.amazonaws.com:5432/dambgdhumm6522" 
+import os
+ 
+DATABASE_URL = os.environ['DATABASE_URL']
 
 def give_timetable(chat_id):
     conn = psycopg2.connect(DATABASE_URL, sslmode='require')
@@ -62,6 +60,7 @@ def load_timetable(group):
     INSERT INTO time_table (group_, schedule) 
     VALUES (%s, %s);"""
     cur.execute(sql, (group, data))
+    conn.commit()
 
     cur.close()
     conn.close()
@@ -82,4 +81,81 @@ def load_week(group):
     
     cur.close()
     conn.close()
+    
+def is_ex_user(chat_id):
+    chat_id = str(chat_id)
+    conn = psycopg2.connect(DATABASE_URL, sslmode='require')
+    cur = conn.cursor()
+    sql = """
+            SELECT users.chat_id FROM users
+            WHERE users.chat_id = {};
+        """
+    sql = sql.format(chat_id)
+        
+    cur.execute(sql)
+    try:
+        cur.fetchone()[0]
+        cur.close()
+        conn.close()
+        return True
+    except:
+        cur.close()
+        conn.close()
+        return False
+
+def is_ex_group(group):
+    conn = psycopg2.connect(DATABASE_URL, sslmode='require')
+    cur = conn.cursor()
+    sql = """
+            SELECT time_table.group_ FROM time_table
+            WHERE time_table.group_ = '{}';
+        """
+    sql = sql.format(group) 
+        
+    cur.execute(sql)
+    try:
+        cur.fetchone()[0]
+        cur.close()
+        conn.close()
+        return True
+    except:
+        cur.close()
+        conn.close()
+        return False
+    
+def add_just_in_user(chat_id, name, group):
+    chat_id = str(chat_id)
+    conn = psycopg2.connect(DATABASE_URL, sslmode='require')
+    cur = conn.cursor()
+    sql = """ 
+    INSERT INTO users (chat_id, name, group) 
+    VALUES ({}, '{}', '{}');"""
+    sql = sql.format(chat_id, name, group)
+    cur.execute(sql)
+    conn.commit()
+    cur.close()
+    conn.close()
+    
+def is_group_valid(group):
+    # Для безапаснасти надо бы добавить сюда проверку
+    # регулярным выражением еще
+    try:
+        scraper.give_link(group)
+        return True
+    except:
+        return False
+    
+def add_user(chat_id, name, group):
+    if is_ex_group:
+        add_just_in_user(chat_id, name, group)
+        return "User added complete"
+    else:
+        if is_group_valid:
+            try:
+                load_timetable(group)
+                add_just_in_user(chat_id, name, group)
+                return "User added complete"
+            except:
+                return "Sorry something goes wrong"
+        
     

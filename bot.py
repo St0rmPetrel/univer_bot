@@ -4,14 +4,12 @@ from flask import Flask, request
 import telebot
 # My imports 
 from timetable import TimeTable
-from handler import *
+from command_handler import text_messege, is_timetable_command, is_day, is_shape
+from data_base_handler import add_user, give_timetable, give_week, is_ex_user, load_week
 
 TOKEN = os.environ['TOKEN']
 bot = telebot.TeleBot(TOKEN)
 server = Flask(__name__)
-
-users = {}#
-groups = []#
 
 @bot.message_handler(commands=['start', 'help'])
 def start(message):
@@ -28,15 +26,14 @@ def help_timetable(message):
 @bot.message_handler(commands=['timetable'])
 def timetable(message):
     chat_id = message.chat.id
-    try:
-        group = users[chat_id]
-    except:
+    if not is_ex_user(chat_id):
         text = "Probably you are new user, or bot was reload. Try to use \
  /group [your group] command"
         bot.send_message(chat_id, text=text)
         return None
-    file_path = "TimeTabeles/{}".format(group) + ".json" 
-    t = TimeTable(file_path)
+    data = give_timetable(chat_id)
+    week = give_week()
+    t = TimeTable(data, week)
     command = message.text.split()
     shape = "brief"
     day = "today"
@@ -62,34 +59,26 @@ def timetable(message):
 @bot.message_handler(commands=['week'])
 def week(message):
     chat_id = message.chat.id
-    file_curent_week = "current_week.json"
-    with open(file_curent_week) as f:
-        curent_week = json.load(f)
-    bot.send_message(chat_id, text=curent_week)
+    week = give_week() 
+    bot.send_message(chat_id, text=week)
 
 @bot.message_handler(commands=['group'])
 def group_(message):
     chat_id = message.chat.id
-    groups = give_json("groups.json")
-    try:
-        group = message.text.split()[1]
-    except:
-        text = "Command error"
-    if group in groups:
-        users[chat_id] = group
-        text = "Okay, now you can look on your timetable"
-    else:
+    name = message.from_user.first_name
+    if not is_ex_user(chat_id):
         try:
-            time_table_update(group)
-            users[chat_id] = group
-            groups.append(group)
-            text = "Okay, now you can look on your timetable"
+            group = message.text.split()[1]
+            text = add_user(chat_id, name, group)
         except:
-            text = "Your group is probably wrong"
-    # save_json("users.json", users)
-    # save_json("groups.json", groups)
+            text = "Command error"
+    else:
+        text = "User already exist"
+    
     bot.send_message(chat_id, text=text)
     
+"""
+Может когда нибудь введу эту функцию
 @bot.message_handler(commands=['update'])
 def update(message):
     chat_id = message.chat.id
@@ -104,19 +93,17 @@ def update(message):
     time_table_update(group)
     text = "Your timetable was updating successful"
     bot.send_message(chat_id, text=text)
+"""
 
 @bot.message_handler(commands=['newweek'])
 def newweek(message):
     chat_id = message.chat.id
     try:
-        group = users[chat_id]
+        load_week("СМ4-101") # Это ужасно, заладка
+        week = give_week()
+        text = week
     except:
-        text = "Probably you are new user, or bot was reload. Try to use \
- /group [your group] command"
-        bot.send_message(chat_id, text=text)
-        return None
-    week_update(group)
-    text = "Your week was updating successful"
+        text = "Somethink goes wrong"
     bot.send_message(chat_id, text=text)
 
 # From this place start server part, don't touch.

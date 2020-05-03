@@ -5,8 +5,6 @@ Created on Tue Apr 28 09:05:32 2020
 
 @author: telman
 """
-from scraper import load_timetable, give_link, load_week
-
 day_command = ["today", "tomorrow", "yesterday", "week"]
 shape_command = ["brief", "detail"]
 
@@ -41,18 +39,7 @@ def is_timetable_command(command, timetable):
     else:
         return False
     
-def time_table_update(group):
-    link = give_link(group)
-    file_path = "TimeTabeles/{}".format(group) + ".json"
-    load_timetable(link, file_path)
-    return file_path
-
-def week_update(group):
-    link = give_link(group)
-    file_path = "current_week.json"
-    load_week(link, file_path)
-    return file_path
-
+    
 def text_messege(command):
     text_start = "I can help you to remember the timetable in  your university and \
 current number of study-week.\n\n\
