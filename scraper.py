@@ -68,8 +68,9 @@ def save_lesson(timetable, lesson, day, lesson_number, lesson_name):
     
 
 def take_timetable(bs):
-    week_days = ["Понедельник", "Вторник", "Среда",
-             "Четверг", "Пятница", "Суббота"]
+    # week_days = ["Понедельник", "Вторник", "Среда",
+    #          "Четверг", "Пятница", "Суббота"]
+    week_days = ["ПН", "ВТ", "СР", "ЧТ", "ПТ", "СБ"]
     lesson_time = ["08:30 - 10:05", "10:15 - 11:50", "12:00 - 13:35", 
                "13:50 - 15:25", "15:40 - 17:15", 
                "17:25 - 19:00", "19:10 - 20:45"]
@@ -86,7 +87,7 @@ def take_timetable(bs):
             lesson_q = filter_lesson(lesson_name, lesson_items)
             save_lesson(timetable, lesson_q, day, lesson_number, lesson_name)
             lesson_number += 1
-    timetable["Воскресенье"] = [None, None, None, None, None, None, None]
+    timetable["ВС"] = [None, None, None, None, None, None, None]
     return timetable    
 
 def save_json(new_file_name, data):
@@ -98,17 +99,20 @@ def give_json(file_name):
         data = json.load(f)
     return data
 
-def load_timetable(url, new_file_name):
+
+def load_timetable(url): #(url, new_file_name):
     html = urlopen(url)
     bs = BeautifulSoup(html, 'html.parser')
     timetable = take_timetable(bs)
-    save_json(new_file_name, timetable)
+    return timetable
+  #  save_json(new_file_name, timetable)
 
-def load_week(url, new_file_name):
+def load_week(url): #(url, new_file_name):
     html = urlopen(url)
     bs = BeautifulSoup(html, "html.parser")
     data = bs.h4.get_text()
-    save_json(new_file_name, data)
+    return data
+#    save_json(new_file_name, data)
     
 def give_link(group):
     url = "https://students.bmstu.ru/schedule/list"

@@ -11,28 +11,23 @@ class TimeTable():
     bla bla bla 
     """
     
-    def __init__(self, filename="timetable.json", 
-                 file_curent_week="current_week.json"):
+    def __init__(self, time_table_dict, week="1 неделя, знаменатель"):
         """
         Parameters
         ----------
-        filename : Str
-            Name *.json file where store the timetable.
+        time_table_dict: dict
+            
+        week: str
         -------
         None.
 
         """
-        self.filename = filename
-        with open(self.filename) as f:
-            self.timetable = json.load(f)
-        self.file_curent_week = file_curent_week
-        with open(self.file_curent_week) as f:
-            self.curent_week = int(json.load(f).split()[0])
+        self.timetable = time_table_dict
+        self.curent_week = int(week.split()[0])
         self.lesson_time = ["08:30 - 10:05", "10:15 - 11:50", "12:00 - 13:35", 
                             "13:50 - 15:25", "15:40 - 17:15", 
                             "17:25 - 19:00", "19:10 - 20:45"]
-        self.weekdays = ["Понедельник", "Вторник", "Среда",
-             "Четверг", "Пятница", "Суббота", "Воскресенье"]
+        self.weekdays = ["ПН", "ВТ", "СР", "ЧТ", "ПТ", "СБ", "ВС"]
         
     def brief(self, lesson, lesson_number):
         time_beg = self.lesson_time[lesson_number].split()[0]
