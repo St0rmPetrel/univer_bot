@@ -128,7 +128,7 @@ def add_just_in_user(chat_id, name, group):
     conn = psycopg2.connect(DATABASE_URL, sslmode='require')
     cur = conn.cursor()
     sql = """ 
-    INSERT INTO users (chat_id, name, group) 
+    INSERT INTO users (chat_id, name, group_) 
     VALUES ({}, '{}', '{}');"""
     sql = sql.format(chat_id, name, group)
     cur.execute(sql)
