@@ -65,17 +65,24 @@ def week(message):
 @bot.message_handler(commands=['group'])
 def group_(message):
     chat_id = message.chat.id
-    name = message.from_user.first_name
+    name = message.from_user.first_name # Мне кажется тут ошибка 
     if not is_ex_user(chat_id):
         try:
             group = message.text.split()[1]
             text = add_user(chat_id, name, group)
         except:
-            text = "Command error"
+            text = "Command error" # вот это выводит
     else:
         text = "User already exist"
     
     bot.send_message(chat_id, text=text)
+
+@bot.message_handler(commands=['make_test'])
+def make_tests(message):
+    chat_id = message.chat.id
+    name = message.from_user.first_name # Мне кажется тут ошибка 
+    
+    bot.send_message(chat_id, text=name)
     
 """
 Может когда нибудь введу эту функцию
