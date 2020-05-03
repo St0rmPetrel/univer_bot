@@ -81,7 +81,15 @@ def group_(message):
 def make_tests(message):
     chat_id = message.chat.id
     name = message.from_user.first_name # Мне кажется тут ошибка 
-    
+    if not is_ex_user(chat_id):
+        try:
+            group = message.text.split()[1]
+            text = "Chat_id = {}, name = '{}', group = '{}'"
+            text = text.format(str(chat_id), name, group)
+        except:
+            text = "Command error" # вот это выводит
+    else:
+        text = "User already exist"
     bot.send_message(chat_id, text=name)
     
 """
