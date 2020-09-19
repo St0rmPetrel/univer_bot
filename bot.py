@@ -5,7 +5,7 @@ import telebot
 # My imports 
 from timetable import TimeTable
 from command_handler import text_messege, is_timetable_command, is_day, is_shape
-from data_base_handler import add_user, give_timetable, give_week, is_ex_user, load_week
+from data_base_handler import add_user, give_timetable, give_week, is_ex_user, load_week, give_group, update_user_group
 
 TOKEN = os.environ['TOKEN']
 bot = telebot.TeleBot(TOKEN)
@@ -65,13 +65,13 @@ def week(message):
 @bot.message_handler(commands=['group'])
 def group_(message):
     chat_id = message.chat.id
-    name = message.from_user.first_name # Мне кажется тут ошибка 
+    name = message.from_user.first_name
     if not is_ex_user(chat_id):
         try:
             group = message.text.split()[1]
             text = add_user(chat_id, name, group)
         except:
-            text = "Command error" # вот это выводит
+            text = "Command error"
     else:
         text = "User already exist"
     
@@ -80,41 +80,43 @@ def group_(message):
 @bot.message_handler(commands=['make_test'])
 def make_tests(message):
     chat_id = message.chat.id
-    name = message.from_user.first_name # Мне кажется тут ошибка 
+    name = message.from_user.first_name 
     if not is_ex_user(chat_id):
         try:
             group = message.text.split()[1]
             text = "Chat_id = {}, name = '{}', group = '{}'"
             text = text.format(str(chat_id), name, group)
         except:
-            text = "Command error" # вот это выводит
+            text = "Command error"
     else:
         text = "User already exist"
     bot.send_message(chat_id, text=text)
     
-"""
-Может когда нибудь введу эту функцию
+
 @bot.message_handler(commands=['update'])
 def update(message):
     chat_id = message.chat.id
-    # users = give_json("users.json")
-    try:
-        group = users[chat_id]
-    except:
+    new_group = message.text.split()[1]
+    if not is_ex_user(chat_id):
         text = "Probably you are new user, or bot was reload. Try to use \
  /group [your group] command"
         bot.send_message(chat_id, text=text)
         return None
-    time_table_update(group)
+    update_user_group(chat_id, new_group)
     text = "Your timetable was updating successful"
     bot.send_message(chat_id, text=text)
-"""
 
 @bot.message_handler(commands=['newweek'])
 def newweek(message):
     chat_id = message.chat.id
+    if not is_ex_user(chat_id):
+        text = "Probably you are new user, or bot was reload. Try to use \
+ /group [your group] command"
+        bot.send_message(chat_id, text=text)
+        return None
+    group = give_group(chat_id)
     try:
-        load_week("СМ4-111") # Это ужасно, заладка
+        load_week(group)
         week = give_week()
         text = week
     except:

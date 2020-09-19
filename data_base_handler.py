@@ -42,7 +42,14 @@ def give_week():
         SELECT * FROM week;
     """ 
     return execute_sql(sql, fetch=True)
-    
+
+def give_group(chat_id):
+    sql = """
+        SELECT users.group_ FROM users
+        WHERE users.chat_id = {};
+    """ 
+    sql = sql.format(chat_id)
+    return execute_sql(sql, fetch=True)
 
 def load_timetable(group):
     url = scraper.give_link(group)
