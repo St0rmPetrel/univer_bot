@@ -114,7 +114,7 @@ def update(message):
 def newweek(message):
     chat_id = message.chat.id
     try:
-        load_week("СМ4-101") # Это ужасно, заладка
+        load_week("СМ4-111") # Это ужасно, заладка
         week = give_week()
         text = week
     except:
