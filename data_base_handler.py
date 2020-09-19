@@ -146,11 +146,11 @@ def is_group_valid(group):
         return False
     
 def add_user(chat_id, name, group):
-    if is_ex_group:
+    if is_ex_group(group):
         add_just_in_user(chat_id, name, group)
         return "User added complete"
     else:
-        if is_group_valid:
+        if is_group_valid(group):
             try:
                 load_timetable(group)
                 add_just_in_user(chat_id, name, group)
