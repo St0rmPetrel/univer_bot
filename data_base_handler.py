@@ -193,12 +193,12 @@ def update_user_group(chat_id, new_group):
     if (is_group_valid(new_group)):
         sql = """
             UPDATE users
-            SET users.group_ = '{}'
+            SET group_ = '{}'
             WHERE users.chat_id = {};
         """
         sql = sql.format(new_group, chat_id)
         execute_sql(sql)
-        #delete_time_table_user(chat_id)
+        delete_time_table_user(chat_id)
     else:
         return "Group is not valid"
     return "Your timetable was updating successful"
