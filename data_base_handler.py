@@ -177,12 +177,7 @@ def delete_admin(chat_id):
     execute_sql(sql)
     
 def delete_time_table_user(chat_id):
-    sql = """
-        SELECT users.group_ FROM users
-        WHERE users.chat_id = {};
-    """
-    sql = sql.format(chat_id)
-    current_group = execute_sql(sql, fetch=True)
+    current_group = give_group(chat_id)
     sql = """
         SELECT COUNT(1) FROM users
         WHERE users.group_ = '{}'
@@ -193,7 +188,6 @@ def delete_time_table_user(chat_id):
         delete_time_table(current_group) 
 
 def update_user_group(chat_id, new_group):
-    delete_time_table_user(chat_id)
     if (not is_ex_group(new_group)) and (is_group_valid(new_group)):
         load_timetable(new_group)
     if (is_group_valid(new_group)):
@@ -204,8 +198,10 @@ def update_user_group(chat_id, new_group):
         """
         sql = sql.format(new_group, chat_id)
         execute_sql(sql)
+        #delete_time_table_user(chat_id)
     else:
         return "Group is not valid"
+    return "Your timetable was updating successful"
     
 def add_to_admin_list(chat_id, name):
     chat_id = str(chat_id)

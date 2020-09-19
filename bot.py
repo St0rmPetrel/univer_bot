@@ -102,8 +102,7 @@ def update(message):
  /group [your group] command"
         bot.send_message(chat_id, text=text)
         return None
-    update_user_group(chat_id, new_group)
-    text = "Your timetable was updating successful"
+    text = update_user_group(chat_id, new_group)
     bot.send_message(chat_id, text=text)
 
 @bot.message_handler(commands=['newweek'])
