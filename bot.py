@@ -26,7 +26,7 @@ from atom_handlers import (back_main_menu_handler, week_handler,
 
 PORT = int(os.environ.get('PORT', 5000))
 def main():
-    TOKEN = "1125707144:AAE2J9E4td-5AggyDNdXxx-r5CnVEJUmSJc"
+    TOKEN = os.environ['TOKEN']
     updater = Updater(TOKEN, use_context=True)
 
     dp = updater.dispatcher
