@@ -1,140 +1,84 @@
-# Main imports for server.
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+# This program is dedicated to the public domain under the CC0 license.
+
+from telegram.ext import Updater, ConversationHandler
 import os
-from flask import Flask, request
-import telebot
-# My imports 
-from timetable import TimeTable
-from command_handler import text_messege, is_timetable_command, is_day, is_shape
-from data_base_handler import add_user, give_timetable, give_week, is_ex_user, load_week, give_group, update_user_group
 
-TOKEN = os.environ['TOKEN']
-bot = telebot.TeleBot(TOKEN)
-server = Flask(__name__)
+from markups import (MAIN_MENU, HELP, REGISTING, TIME_TABLE, 
+                     MAIN_MENU, HELP, REGISTING, TIME_TABLE,
+                     DAY, FORMAT, WEEK_NUM, UPDATE, ADMIN, UPDATE_GROUP)
 
-@bot.message_handler(commands=['start', 'help'])
-def start(message):
-    chat_id = message.chat.id
-    text = text_messege('start')
-    bot.send_message(chat_id, text)
+from help_handlers import (help_main_handler, help_timetable_handler, 
+                          help_week_handler, help_update_handler, 
+                          help_admin_handler)
 
-@bot.message_handler(commands=['help_timetable'])
-def help_timetable(message):
-    chat_id = message.chat.id
-    text = text_messege('help_timetable')
-    bot.send_message(chat_id, text)
-    
-@bot.message_handler(commands=['timetable'])
-def timetable(message):
-    chat_id = message.chat.id
-    if not is_ex_user(chat_id):
-        text = "Probably you are new user, or bot was reload. Try to use \
- /group [your group] command"
-        bot.send_message(chat_id, text=text)
-        return None
-    data = give_timetable(chat_id)
-    week = give_week()
-    t = TimeTable(data, week)
-    command = message.text.split()
-    shape = "brief"
-    day = "today"
-    week = "current"
-    if is_timetable_command(command, t):
-        for sub_command in command:
-            if is_day(sub_command, t):
-                day = sub_command
-            if is_shape(sub_command):
-                shape = sub_command
-        if day == "week":
-            text = t.print_week(shape, week)
-        else:
-            text = t.print_day(t.give_day(day), shape, week)
-            if text:
-                text = day + '\n' + text
-            else:
-                text = "В этот день нет пар"
-    else:
-        text = "Command error"
-    bot.send_message(chat_id=chat_id, text=text)
+from timetable_handlers import (timetable_main_handler, timetable_week_handler, 
+                                timetable_day_handler, days_handler,
+                                format_handler, week_num_handler)
 
-@bot.message_handler(commands=['week'])
-def week(message):
-    chat_id = message.chat.id
-    week = give_week() 
-    bot.send_message(chat_id, text=week)
+from update_handlers import (update_main_handler, update_group_handler, 
+                             update_week_handler, update_group_regist_handler)
 
-@bot.message_handler(commands=['group'])
-def group_(message):
-    chat_id = message.chat.id
-    name = message.from_user.first_name
-    if not is_ex_user(chat_id):
-        try:
-            group = message.text.split()[1]
-            text = add_user(chat_id, name, group)
-        except:
-            text = "Command error"
-    else:
-        text = "User already exist"
-    
-    bot.send_message(chat_id, text=text)
+from atom_handlers import (back_main_menu_handler, week_handler,
+                           start_handler, cancel_handler, registing_handler,
+                           admin_main_handler)
 
-@bot.message_handler(commands=['make_test'])
-def make_tests(message):
-    chat_id = message.chat.id
-    name = message.from_user.first_name 
-    if not is_ex_user(chat_id):
-        try:
-            group = message.text.split()[1]
-            text = "Chat_id = {}, name = '{}', group = '{}'"
-            text = text.format(str(chat_id), name, group)
-        except:
-            text = "Command error"
-    else:
-        text = "User already exist"
-    bot.send_message(chat_id, text=text)
-    
+PORT = int(os.environ.get('PORT', 5000))
+def main():
+    TOKEN = "1125707144:AAE2J9E4td-5AggyDNdXxx-r5CnVEJUmSJc"
+    updater = Updater(TOKEN, use_context=True)
 
-@bot.message_handler(commands=['update'])
-def update(message):
-    chat_id = message.chat.id
-    new_group = message.text.split()[1]
-    if not is_ex_user(chat_id):
-        text = "Probably you are new user, or bot was reload. Try to use \
- /group [your group] command"
-        bot.send_message(chat_id, text=text)
-        return None
-    text = update_user_group(chat_id, new_group)
-    bot.send_message(chat_id, text=text)
+    dp = updater.dispatcher
 
-@bot.message_handler(commands=['newweek'])
-def newweek(message):
-    chat_id = message.chat.id
-    if not is_ex_user(chat_id):
-        text = "Probably you are new user, or bot was reload. Try to use \
- /group [your group] command"
-        bot.send_message(chat_id, text=text)
-        return None
-    group = give_group(chat_id)
-    try:
-        load_week(group)
-        week = give_week()
-        text = week
-    except:
-        text = "Somethink goes wrong"
-    bot.send_message(chat_id, text=text)
+    conv_handler = ConversationHandler(
+        entry_points=[start_handler],
 
-# From this place start server part, don't touch.
-@server.route('/' + TOKEN, methods=['POST'])
-def getMessage():
-    bot.process_new_updates([telebot.types.Update.de_json(request.stream.read().decode("utf-8"))])
-    return "!", 200
+        states={
+            REGISTING : [registing_handler],
+            #>>> main menu stuff >>>
+            MAIN_MENU: [help_main_handler, timetable_main_handler,
+                        update_main_handler, admin_main_handler,
+                        week_handler],
+                HELP: [help_timetable_handler, help_week_handler,
+                       help_update_handler, help_admin_handler,
+                       back_main_menu_handler],
+                #>>> timetable stuff >>>
+                TIME_TABLE: [timetable_week_handler, # Через контекст скорее всего както можно
+                             timetable_day_handler,
+                             back_main_menu_handler],
+                    DAY: [days_handler, 
+                          back_main_menu_handler],
+                    FORMAT: [format_handler,
+                             back_main_menu_handler],
+                    WEEK_NUM: [week_num_handler,
+                               back_main_menu_handler],
+                #<<< timetable stuff <<<
+                UPDATE: [update_group_handler, update_week_handler,
+                         back_main_menu_handler],
+                    UPDATE_GROUP: [update_group_regist_handler],
+                ADMIN: [back_main_menu_handler] # В будущем надеюсь доделать
+            #<<< main menu stuff <<<
+        },
+
+        fallbacks=[cancel_handler]
+    )
+
+    dp.add_handler(conv_handler)
+
+    # Start the Bot
+    #updater.start_polling()
+    updater.start_webhook(listen="0.0.0.0",
+                          port=int(PORT),
+                          url_path=TOKEN)
+    updater.bot.setWebhook('https://stormy-falls-05476.herokuapp.com/' + TOKEN)
 
 
-@server.route("/")
-def webhook():
-    bot.remove_webhook()
-    bot.set_webhook(url='https://stormy-falls-05476.herokuapp.com/' + TOKEN)
-    return "!", 200
+    # Run the bot until you press Ctrl-C or the process receives SIGINT,
+    # SIGTERM or SIGABRT. This should be used most of the time, since
+    # start_polling() is non-blocking and will stop the bot gracefully.
+    updater.idle()
 
 
-if __name__ == "__main__":
-    server.run(host="0.0.0.0", port=int(os.environ.get('PORT', 5000)))
+if __name__ == '__main__':
+    main()

@@ -176,7 +176,7 @@ def delete_admin(chat_id):
     sql = sql.format(chat_id)
     execute_sql(sql)
     
-def delete_time_table_user(chat_id):
+def delete_time_table_user(chat_id, new_group):
     current_group = give_group(chat_id)
     sql = """
         SELECT COUNT(1) FROM users
@@ -184,14 +184,14 @@ def delete_time_table_user(chat_id):
     """
     sql = sql.format(current_group)
     count = execute_sql(sql, fetch=True)
-    if count == 1:
+    if count == 1 and (current_group != new_group):
         delete_time_table(current_group) 
 
 def update_user_group(chat_id, new_group):
     if (not is_ex_group(new_group)) and (is_group_valid(new_group)):
         load_timetable(new_group)
     if (is_group_valid(new_group)):
-        delete_time_table_user(chat_id)
+        delete_time_table_user(chat_id, new_group)
         sql = """
             UPDATE users
             SET group_ = '{}'

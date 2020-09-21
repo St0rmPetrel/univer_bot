@@ -1,45 +1,15 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Created on Tue Apr 28 09:05:32 2020
+Created on Sun Sep 20 13:15:44 2020
 
 @author: telman
 """
-day_command = ["today", "tomorrow", "yesterday", "week"]
-shape_command = ["brief", "detail"]
 
-def is_day(sub_command, timetable):
-    """Say is a day or not."""
-    if sub_command in (timetable.weekdays + day_command):
-        return True
-    else:
-        return False
+from telegram.ext import MessageHandler, Filters
 
-def is_shape(sub_command):
-    if sub_command in shape_command:
-        return True
-    else:
-        return False
-def is_timetable_command(command, timetable):
-    if command[0] == "/timetable":
-        if len(command) > 1:
-            command = command[1:]
-            flag = True
-            for sub_command in command:
-                if is_day(sub_command, timetable) or is_shape(sub_command):
-                    pass
-                else:
-                    flag = False
-            if flag:
-                return True
-            else:
-                return False
-        else:
-            return True
-    else:
-        return False
-    
-    
+from markups import (HELP, help_menu_markup)
+
 def text_messege(command):
     text_start = "I can help you to remember the timetable in  your university and \
 current number of study-week.\n\n\
@@ -67,4 +37,40 @@ in any order what you like or pass any of them. By default, form is brief and\
     except:
         ans = ""
     return ans
+
+def help_main(update, context):
+    update.message.reply_text("Enter in help menu", 
+                              reply_markup=help_menu_markup)
+    return HELP
+reg_str = r'^(help)$'
+help_main_handler = MessageHandler(Filters.regex(reg_str), help_main)
+# >>>>> HELP functions >>>>>
+def help_timetable(update, context):
+    update.message.reply_text("Enter in: help_timetable")
  
+reg_str = r'^(timetable)$'
+help_timetable_handler = MessageHandler(Filters.regex(reg_str), 
+                                        help_timetable)
+
+def help_week(update, context):
+    update.message.reply_text("Enter in: help_week")
+    
+reg_str = r'^(week)$'
+help_week_handler = MessageHandler(Filters.regex(reg_str), 
+                                        help_week)
+
+def help_update(update, context):
+    update.message.reply_text("Enter in: help_update")
+    
+reg_str = r'^(update)$'
+help_update_handler = MessageHandler(Filters.regex(reg_str), 
+                                        help_update)
+
+def help_admin(update, context):
+    update.message.reply_text("Enter in: help_admin")
+    
+reg_str = r'^(admin)$'
+help_admin_handler = MessageHandler(Filters.regex(reg_str), 
+                                        help_admin)
+
+# <<<< HELP functions <<<<<
